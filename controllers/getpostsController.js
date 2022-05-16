@@ -1,9 +1,8 @@
-const connection = require('../db')
+const connection = require('../db');
 
 const getPosts = async (req, resp) => {
 
    const { author } = req.query
-   console.log(author)
 
    connection.connect(error => {
       if (error) {
@@ -17,6 +16,9 @@ const getPosts = async (req, resp) => {
       if (error) {
          resp.status(500).json({ 'status': 'error' })
          return false;
+      } else if (res[0] === undefined) {
+         resp.status(404).json({ 'status': 'error', 'message': 'not Found' })
+         return false;
       }
       const { id } = res[0]
       const sql = `SELECT * FROM post WHERE author_id = ${id}`
@@ -28,7 +30,7 @@ const getPosts = async (req, resp) => {
          resp.status(200).json({ 'status': 'ok', 'post': res })
       })
    })
-}
+};
 
 module.exports = getPosts;
 
